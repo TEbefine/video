@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Staged composition (generated from templates/index.html + locales.json)
+# templates/index.html is the source of truth
+/index.html
+
+# HyperFrames runtime, preview cache & studio state
+.hyperframes/
+.thumbnails/
+.media/
+.waveform-cache/
+
+# Rendered video outputs & snapshots
+renders/
+snapshots/
+*.mp4
+*.webm
+
+# Voice generation caches
+assets/audio/**/.cache.json
+assets/audio/**/.voice-meta.json
+.cache/
+
+# Logs & Environment
+*.log
+.env
+.env.local
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,18 @@
+{
+  "lang": "th",
+  "voice": "th-TH-PremwadeeNeural",
+  "rate": "+8%",
+  "scene_keys": [
+    "01_hook",
+    "02_intern",
+    "03_formula",
+    "04_cta"
+  ],
+  "durations": [
+    6.96,
+    8.064,
+    7.704,
+    7.2
+  ],
+  "total_duration": 29.928
+}

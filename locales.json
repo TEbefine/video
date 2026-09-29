@@ -1,0 +1,106 @@
+{
+  "en": {
+    "01_hook": {
+      "badge": "AI PROMPTING TIP",
+      "headline": "Vague Prompts Get Vague Answers",
+      "subtext": "Why your AI responses feel robotic and generic",
+      "chat_model": "Claude 3.5 / ChatGPT-4o",
+      "prompt_card_badge": "USER PROMPT",
+      "prompt_card_text": "Write a marketing plan for my brand.",
+      "error_badge": "FAILED: TOO VAGUE",
+      "result_card_badge": "GENERIC AI OUTPUT",
+      "result_card_text": "1. Define target audience. 2. Post on social media daily. 3. Run ads...",
+      "narration": "Vague prompts get vague answers. Never ask AI to write a marketing plan and expect magic."
+    },
+    "02_intern": {
+      "badge": "THE MINDSET SHIFT",
+      "headline": "Treat AI Like a Brilliant Intern",
+      "subtext": "Not a magic mind reader",
+      "bad_concept": "❌ Mind Reader",
+      "good_concept": "✨ Brilliant Intern",
+      "card_role": "JUNIOR INTERN PRINCIPLE",
+      "feature_1_title": "Lightning Fast & Knowledgeable",
+      "feature_1_desc": "Boundless knowledge, ready to execute in seconds",
+      "feature_2_title": "Needs Clear Instructions",
+      "feature_2_desc": "Requires specific goals, context, and guardrails",
+      "narration": "Treat AI like a brilliant junior intern, not a mind reader. It has great knowledge, but needs clear instructions and context."
+    },
+    "03_formula": {
+      "badge": "THE 3-PART FORMULA",
+      "headline": "Role • Context • Output Format",
+      "subtext": "Master these three essential pillars",
+      "step_1_num": "01",
+      "step_1_title": "ROLE",
+      "step_1_desc": "Who is AI acting as? (e.g. Senior Brand Strategist)",
+      "step_2_num": "02",
+      "step_2_title": "CONTEXT",
+      "step_2_desc": "Target audience, brand goals, and constraints",
+      "step_3_num": "03",
+      "step_3_title": "OUTPUT FORMAT",
+      "step_3_desc": "Markdown table, 3 bullet points, executive tone",
+      "narration": "Use the three-part formula: Role, Context, and Output Format. Define who AI is, the background context, and the exact format."
+    },
+    "04_cta": {
+      "badge": "KEY TAKEAWAY",
+      "headline": "Clear Inputs Create High-Impact Outputs",
+      "subtext": "Level up your AI productivity today",
+      "card_badge": "PROMPT SMARTER",
+      "card_title": "Clear Inputs = High-Impact Outputs",
+      "cta_btn": "Save & Follow for More AI Tips",
+      "author": "@AIPromptMastery",
+      "narration": "Clear inputs create high-impact outputs. Save this formula, and follow for more actionable AI tips."
+    }
+  },
+  "th": {
+    "01_hook": {
+      "badge": "เทคนิคการเขียนพรอมต์",
+      "headline": "สั่งกว้างๆ ย่อมได้คำตอบกว้างๆ",
+      "subtext": "ทำไมเอไอถึงตอบไม่เคยตรงใจคุณสักที",
+      "chat_model": "Claude 3.5 / ChatGPT-4o",
+      "prompt_card_badge": "คำสั่งของคุณ (PROMPT)",
+      "prompt_card_text": "ช่วยเขียนแผนการตลาดให้หน่อย",
+      "error_badge": "ล้มเหลว: คำสั่งกว้างเกินไป",
+      "result_card_badge": "ผลลัพธ์จากเอไอ (GENERIC OUTPUT)",
+      "result_card_text": "1. กำหนดกลุ่มเป้าหมาย 2. โพสต์โซเชียลมีเดีย 3. ยิงโฆษณา...",
+      "narration": "สั่งเอไอแบบกว้างๆ ย่อมได้คำตอบที่กว้าง อย่าพิมพ์แค่ ช่วยเขียนแผนการตลาด แล้วหวังให้เอไอรู้ใจ"
+    },
+    "02_intern": {
+      "badge": "ปรับวิธีคิดใหม่",
+      "headline": "มองเอไอเป็นน้องฝึกงานหัวกะทิ",
+      "subtext": "ไม่ใช่หมอดูหยั่งรู้ใจ",
+      "bad_concept": "❌ หมอดูรู้ใจ",
+      "good_concept": "✨ เด็กฝึกงานหัวกะทิ",
+      "card_role": "วิธีคิดแบบน้องฝึกงาน",
+      "feature_1_title": "ฉลาดรอบรู้ ทำงานไวมาก",
+      "feature_1_desc": "รู้ข้อมูลมหาศาล พร้อมลุยงานได้ทันที",
+      "feature_2_title": "ต้องการคำสั่งที่ชัดเจน",
+      "feature_2_desc": "ต้องมีบรีฟ ข้อมูลแวดล้อม และขอบเขตงานที่เป๊ะ",
+      "narration": "มองเอไอเป็นน้องฝึกงานหัวกะทิ ไม่ใช่หมอดูหยั่งรู้ใจ เขารอบรู้มาก แต่ต้องการคำสั่งและบริบทที่ชัดเจน"
+    },
+    "03_formula": {
+      "badge": "สูตร 3 ส่วนสำหรับเขียนพรอมต์",
+      "headline": "บทบาท • บริบท • รูปแบบผลลัพธ์",
+      "subtext": "แค่จำ 3 องค์ประกอบนี้ไว้ใช้กับทุกงาน",
+      "step_1_num": "01",
+      "step_1_title": "บทบาท (Role)",
+      "step_1_desc": "กำหนดว่าให้เอไอสวมบทเป็นใคร (เช่น หัวหน้านักการตลาด)",
+      "step_2_num": "02",
+      "step_2_title": "บริบท (Context)",
+      "step_2_desc": "บอกกลุ่มเป้าหมาย ข้อมูลแวดล้อม และเป้าหมายที่ต้องการ",
+      "step_3_num": "03",
+      "step_3_title": "รูปแบบผลลัพธ์ (Format)",
+      "step_3_desc": "ระบุตารางสรุป หัวข้อย่อย โทนภาษา หรือจำนวนคำ",
+      "narration": "จำสูตร 3 ส่วนนี้ไว้ บทบาท บริบท และรูปแบบผลลัพธ์ กำหนดให้ชัดว่าเอไอเป็นใคร ข้อมูลคืออะไร และต้องการฟอร์แมตไหน"
+    },
+    "04_cta": {
+      "badge": "สรุปหัวใจสำคัญ",
+      "headline": "อินพุตที่ชัดเจน สร้างผลลัพธ์ทรงพลัง",
+      "subtext": "อัปเกรดผลงานจากเอไอของคุณวันนี้",
+      "card_badge": "เริ่มเขียนพรอมต์ให้โปร",
+      "card_title": "Prompt ชัดเจน = ผลงานโดดเด่น",
+      "cta_btn": "บันทึกคลิปนี้ไว้ & กดติดตามทริกเอไอ",
+      "author": "@AIPromptMastery",
+      "narration": "อินพุตที่ชัดเจน ย่อมสร้างผลลัพธ์ทรงพลังเสมอ นำสูตรนี้ไปปรับใช้ แล้วกดติดตามเพื่อรับทริกเอไอใหม่ๆ ได้เลยครับ"
+    }
+  }
+}

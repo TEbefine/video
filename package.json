@@ -1,0 +1,19 @@
+{
+  "name": "ai-prompting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "hyperframes preview",
+    "preview": "hyperframes preview",
+    "check": "CI=true hyperframes check",
+    "render": "CI=true hyperframes render -o renders/ai-prompting_th_1080x1920.mp4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "hyperframes": "^0.8.91"
+  }
+}

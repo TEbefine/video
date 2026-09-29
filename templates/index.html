@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to write effective AI prompts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #07090E;
+      --card-glass: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(255, 255, 255, 0.10);
+      --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.40);
+      --cyan: #06B6D4;
+      --cyan-glow: rgba(6, 182, 212, 0.40);
+      --amber: #F59E0B;
+      --amber-glow: rgba(245, 158, 11, 0.40);
+      --rose: #EF4444;
+      --rose-glow: rgba(239, 68, 68, 0.40);
+      --text-main: #FFFFFF;
+      --text-sub: #94A3B8;
+      --text-dim: #64748B;
+      --font-stack: {{font_family}};
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background-color: var(--bg-base);
+      font-family: var(--font-stack);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background-color: var(--bg-base);
+    }
+
+    /* ── Ambient Background Lighting ── */
+    #bg-ambient-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px);
+      background-size: 48px 48px;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      filter: blur(140px);
+      will-change: transform, opacity;
+    }
+
+    #ambient-orb-1 {
+      top: 100px;
+      right: -100px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, var(--cyan-glow) 0%, rgba(6, 182, 212, 0) 70%);
+      opacity: 0.35;
+    }
+
+    #ambient-orb-2 {
+      bottom: 200px;
+      left: -150px;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--emerald-glow) 0%, rgba(16, 185, 129, 0) 70%);
+      opacity: 0.30;
+    }
+
+    #ambient-orb-3 {
+      top: 800px;
+      right: -50px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--amber-glow) 0%, rgba(245, 158, 11, 0) 70%);
+      opacity: 0.22;
+    }
+
+    /* ── Safe Zone Master Layout (Vertical Span: y=170px to y=1670px) ── */
+    #safe-zone-container {
+      position: absolute;
+      top: 170px;
+      bottom: 250px;
+      left: 60px;
+      right: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Global Header */
+    #global-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    #global-branding {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #global-brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--emerald), #059669);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--emerald-glow);
+    }
+
+    #global-brand-logo svg {
+      width: 26px;
+      height: 26px;
+      fill: #ffffff;
+    }
+
+    #global-brand-name {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #FFFFFF;
+      text-transform: uppercase;
+    }
+
+    #global-scene-counter {
+      font-size: 24px;
+      font-weight: 700;
+      color: #CBD5E1;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      padding: 8px 22px;
+      border-radius: 24px;
+      letter-spacing: 1.5px;
+      backdrop-filter: blur(12px);
+    }
+
+    #global-progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    #global-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--emerald), var(--amber));
+      border-radius: 8px;
+      box-shadow: 0 0 16px var(--emerald-glow);
+    }
+
+    /* ── Scene Viewport Wrappers ── */
+    #scenes-viewport {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .scene-wrapper {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      will-change: transform, opacity;
+    }
+
+    .scene-content-box {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Typography & Gradient Clips ── */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 26px;
+      border-radius: 40px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      align-self: flex-start;
+      backdrop-filter: blur(16px);
+    }
+
+    .badge-emerald {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      color: #34D399;
+      box-shadow: 0 0 24px var(--emerald-glow);
+    }
+
+    .badge-cyan {
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid var(--cyan);
+      color: #22D3EE;
+      box-shadow: 0 0 24px var(--cyan-glow);
+    }
+
+    .badge-amber {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid var(--amber);
+      color: #FBBF24;
+      box-shadow: 0 0 24px var(--amber-glow);
+    }
+
+    .badge-pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: currentColor;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .display-headline {
+      font-size: 58px;
+      line-height: 1.15;
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 55%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .display-subtext {
+      font-size: 28px;
+      line-height: 1.45;
+      color: var(--text-sub);
+      margin-bottom: 36px;
+      font-weight: 500;
+    }
+
+    /* ── High-Tech Glassmorphism Container ── */
+    .tech-card {
+      background: var(--card-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    /* ── SCENE 1: THE MISTAKE (CHAT MOCKUP) ── */
+    #s1-chat-window {
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      margin-bottom: 24px;
+    }
+
+    #s1-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #s1-window-dots {
+      display: flex;
+      gap: 10px;
+    }
+
+    .mac-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #FF5F56; }
+    .dot-yellow { background: #FFBD2E; }
+    .dot-green { background: #27C93F; }
+
+    #s1-window-model {
+      font-size: 20px;
+      font-weight: 600;
+      color: #94A3B8;
+      letter-spacing: 1px;
+    }
+
+    #s1-chat-body {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    #s1-prompt-bubble {
+      align-self: flex-end;
+      max-width: 90%;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.18), rgba(16, 185, 129, 0.12));
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: 24px 24px 4px 24px;
+      padding: 24px 30px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    #s1-prompt-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: #38BDF8;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    #s1-typewriter-container {
+      font-family: 'JetBrains Mono', var(--font-stack);
+      font-size: 32px;
+      font-weight: 600;
+      color: #FFFFFF;
+      line-height: 1.35;
+      min-height: 44px;
+    }
+
+    #s1-typewriter-cursor {
+      display: inline-block;
+      width: 4px;
+      height: 32px;
+      background: var(--cyan);
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #s1-failure-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      border-radius: 20px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--rose);
+      color: #F87171;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      box-shadow: 0 0 24px var(--rose-glow);
+      margin-top: 10px;
+      align-self: flex-start;
+      will-change: transform;
+    }
+
+    #s1-output-card {
+      padding: 28px 32px;
+      border-left: 6px solid var(--rose);
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    #s1-output-label {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #s1-output-text {
+      font-size: 26px;
+      color: #94A3B8;
+      line-height: 1.45;
+      font-style: italic;
+    }
+
+    /* ── SCENE 2: INTERN MINDSET ── */
+    #s2-comparison-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .comparison-pill {
+      flex: 1;
+      padding: 20px 24px;
+      border-radius: 24px;
+      font-size: 26px;
+      font-weight: 800;
+      text-align: center;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #s2-tag-bad {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+      overflow: hidden;
+    }
+
+    #s2-strikethrough-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 0%;
+      height: 4px;
+      background: #EF4444;
+      box-shadow: 0 0 12px #EF4444;
+      transform: translateY(-50%);
+    }
+
+    #s2-tag-arrow {
+      font-size: 32px;
+      color: var(--text-dim);
+    }
+
+    #s2-tag-good {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1.5px solid var(--emerald);
+      color: #6EE7B7;
+      box-shadow: 0 0 28px var(--emerald-glow);
+    }
+
+    #s2-hero-card {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 32px 36px;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(16, 185, 129, 0.08));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      margin-bottom: 24px;
+    }
+
+    #s2-avatar-glow {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--cyan), var(--emerald));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px var(--cyan-glow);
+      flex-shrink: 0;
+    }
+
+    #s2-avatar-icon svg {
+      width: 48px;
+      height: 48px;
+      fill: #FFFFFF;
+    }
+
+    #s2-card-role-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+    }
+
+    #s2-features-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .feature-box {
+      padding: 28px 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    #s2-feature-card-1 {
+      border-left: 6px solid var(--cyan);
+    }
+
+    #s2-feature-card-2 {
+      border-left: 6px solid var(--emerald);
+    }
+
+    .feature-icon-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #s2-feat-1-badge {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+    }
+
+    #s2-feat-2-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+    }
+
+    .feature-text-block h4 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+
+    .feature-text-block p {
+      font-size: 24px;
+      color: var(--text-sub);
+      line-height: 1.4;
+    }
+
+    /* ── SCENE 3: 3D FLOATING FORMULA CARDS ── */
+    #s3-cards-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      perspective: 1000px;
+    }
+
+    .formula-3d-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      padding: 34px 40px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+
+    #s3-card-1 {
+      border: 1.5px solid var(--cyan);
+      box-shadow: 0 0 35px var(--cyan-glow), inset 0 0 20px rgba(6, 182, 212, 0.08);
+    }
+
+    #s3-card-2 {
+      border: 1.5px solid var(--emerald);
+      box-shadow: 0 0 35px var(--emerald-glow), inset 0 0 20px rgba(16, 185, 129, 0.08);
+    }
+
+    #s3-card-3 {
+      border: 1.5px solid var(--amber);
+      box-shadow: 0 0 35px var(--amber-glow), inset 0 0 20px rgba(245, 158, 11, 0.08);
+    }
+
+    .pill-number-tag {
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    #s3-card-1-num {
+      background: rgba(6, 182, 212, 0.18);
+      color: #38BDF8;
+      border: 1px solid var(--cyan);
+    }
+
+    #s3-card-2-num {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34D399;
+      border: 1px solid var(--emerald);
+    }
+
+    #s3-card-3-num {
+      background: rgba(245, 158, 11, 0.18);
+      color: #FBBF24;
+      border: 1px solid var(--amber);
+    }
+
+    .formula-card-info {
+      flex: 1;
+    }
+
+    .formula-card-info h3 {
+      font-size: 34px;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .formula-card-info p {
+      font-size: 24px;
+      color: var(--text-sub);
+      line-height: 1.4;
+    }
+
+    /* ── SCENE 4: CTA ── */
+    #s4-hero-card {
+      position: relative;
+      padding: 48px 44px;
+      border-radius: 36px;
+      background: linear-gradient(145deg, rgba(20, 24, 34, 0.95), rgba(12, 15, 22, 0.95));
+      border: 2px solid var(--emerald);
+      box-shadow: 0 0 50px var(--emerald-glow), 0 35px 70px -15px rgba(0, 0, 0, 0.85);
+      text-align: center;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    #s4-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    #s4-card-pill {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    #s4-hero-title {
+      font-size: 46px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.25;
+      margin-bottom: 32px;
+      letter-spacing: -0.5px;
+    }
+
+    #s4-formula-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .formula-badge-chip {
+      padding: 12px 24px;
+      border-radius: 16px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    #s4-formula-role {
+      background: rgba(6, 182, 212, 0.15);
+      color: #38BDF8;
+      border: 1px solid var(--cyan);
+    }
+
+    #s4-formula-context {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid var(--emerald);
+    }
+
+    #s4-formula-format {
+      background: rgba(245, 158, 11, 0.15);
+      color: #FBBF24;
+      border: 1px solid var(--amber);
+    }
+
+    .formula-plus {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-dim);
+    }
+
+    #s4-cta-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      width: 100%;
+      padding: 28px 40px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--emerald), #059669);
+      color: #FFFFFF;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      box-shadow: 0 16px 40px var(--emerald-glow);
+      border: none;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #s4-cta-button svg {
+      width: 34px;
+      height: 34px;
+      fill: currentColor;
+    }
+
+    #s4-author-tag {
+      font-size: 28px;
+      color: var(--text-sub);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div data-hf-id="hf-moju" id="root" data-composition-id="main" data-start="0" data-duration="{{total_duration}}" data-width="1080" data-height="1920" data-fps="60">
+    <!-- Dynamic Ambient Lighting & Tech Grid -->
+    <div data-hf-id="hf-od3w" id="bg-ambient-grid"></div>
+    <div data-hf-id="hf-uyd0" id="ambient-orb-1" class="ambient-orb"></div>
+    <div data-hf-id="hf-3m8v" id="ambient-orb-2" class="ambient-orb"></div>
+    <div data-hf-id="hf-zo4u" id="ambient-orb-3" class="ambient-orb"></div>
+
+    <!-- Safe Zone Container (Top 170px, Bottom 250px) -->
+    <div data-hf-id="hf-dvm7" id="safe-zone-container">
+      <!-- Global Top Bar -->
+      <div data-hf-id="hf-9ohq" id="global-top-bar">
+        <div data-hf-id="hf-iu9g" id="global-branding">
+          <div data-hf-id="hf-axw4" id="global-brand-logo">
+            <svg data-hf-id="hf-ulu9" viewBox="0 0 24 24"><path data-hf-id="hf-o2bp" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+          </div>
+          <span data-hf-id="hf-5hc1" id="global-brand-name">AI MASTERCLASS</span>
+        </div>
+        <div data-hf-id="hf-72d6" id="global-scene-counter">01 / 04</div>
+      </div>
+
+      <!-- Global Timeline Progress Bar -->
+      <div data-hf-id="hf-j3a6" id="global-progress-track">
+        <div data-hf-id="hf-xa6k" id="global-progress-bar"></div>
+      </div>
+
+      <!-- Centered Scenes Viewport -->
+      <div data-hf-id="hf-3c1d" id="scenes-viewport">
+        <!-- ── SCENE 1: THE MISTAKE (CHAT MOCKUP) ── -->
+        <div data-hf-id="hf-i8pw" id="scene-01-hook" class="scene-wrapper">
+          <div data-hf-id="hf-0m02" id="s1-content-box" class="scene-content-box">
+            <div data-hf-id="hf-j61e" id="s1-badge" class="badge-pill badge-cyan">
+              <span data-hf-id="hf-69ug" class="badge-pulse-dot"></span>
+              <span data-hf-id="hf-1pig">{{01_hook_badge}}</span>
+            </div>
+            <h1 data-hf-id="hf-zlly" id="s1-title" class="display-headline">{{01_hook_headline}}</h1>
+            <p data-hf-id="hf-vrri" id="s1-subtext" class="display-subtext">{{01_hook_subtext}}</p>
+
+            <!-- Realistic AI Chat Mockup Window -->
+            <div data-hf-id="hf-khct" id="s1-chat-window" class="tech-card">
+              <div data-hf-id="hf-pvl4" id="s1-window-header">
+                <div data-hf-id="hf-grc3" id="s1-window-dots">
+                  <div data-hf-id="hf-h8qg" class="mac-dot dot-red"></div>
+                  <div data-hf-id="hf-npcn" class="mac-dot dot-yellow"></div>
+                  <div data-hf-id="hf-7zjc" class="mac-dot dot-green"></div>
+                </div>
+                <div data-hf-id="hf-lnzq" id="s1-window-model">{{01_hook_chat_model}}</div>
+              </div>
+              <div data-hf-id="hf-ytvh" id="s1-chat-body">
+                <div data-hf-id="hf-dqm3" id="s1-prompt-bubble">
+                  <div data-hf-id="hf-34ra" id="s1-prompt-label">{{01_hook_prompt_card_badge}}</div>
+                  <div data-hf-id="hf-rn89" id="s1-typewriter-container">
+                    <span data-hf-id="hf-y6ee" id="s1-typewriter-text"></span><span data-hf-id="hf-wefd" id="s1-typewriter-cursor"></span>
+                  </div>
+                </div>
+                <div data-hf-id="hf-3dpy" id="s1-failure-badge">
+                  <svg data-hf-id="hf-be20" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-5oyw" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>
+                  <span data-hf-id="hf-b7mp">{{01_hook_error_badge}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Generic AI Output Card -->
+            <div data-hf-id="hf-j94s" id="s1-output-card" class="tech-card">
+              <div data-hf-id="hf-4qjg" id="s1-output-label">
+                <svg data-hf-id="hf-zt8c" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-qnzp" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                <span data-hf-id="hf-8snf">{{01_hook_result_card_badge}}</span>
+              </div>
+              <div data-hf-id="hf-b2px" id="s1-output-text">{{01_hook_result_card_text}}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 2: THE INTERN MINDSET ── -->
+        <div data-hf-id="hf-8h2k" id="scene-02-intern" class="scene-wrapper">
+          <div data-hf-id="hf-tiel" id="s2-content-box" class="scene-content-box">
+            <div data-hf-id="hf-7fny" id="s2-badge" class="badge-pill badge-emerald">
+              <span data-hf-id="hf-1t4g" class="badge-pulse-dot"></span>
+              <span data-hf-id="hf-8l2g">{{02_intern_badge}}</span>
+            </div>
+            <h1 data-hf-id="hf-vbkx" id="s2-title" class="display-headline">{{02_intern_headline}}</h1>
+            <p data-hf-id="hf-ucnn" id="s2-subtext" class="display-subtext">{{02_intern_subtext}}</p>
+
+            <!-- Comparison Tag Bar -->
+            <div data-hf-id="hf-45q3" id="s2-comparison-row">
+              <div data-hf-id="hf-aqvt" id="s2-tag-bad" class="comparison-pill" data-layout-allow-occlusion="true">
+                <span data-hf-id="hf-nv0v" data-layout-allow-occlusion="true">{{02_intern_bad_concept}}</span>
+                <div data-hf-id="hf-ck9f" id="s2-strikethrough-line" data-layout-allow-occlusion="true"></div>
+              </div>
+              <div data-hf-id="hf-6bjv" id="s2-tag-arrow">➔</div>
+              <div data-hf-id="hf-sxaf" id="s2-tag-good" class="comparison-pill">
+                <span data-hf-id="hf-sder">{{02_intern_good_concept}}</span>
+              </div>
+            </div>
+
+            <!-- Hero Avatar Card -->
+            <div data-hf-id="hf-y2cu" id="s2-hero-card" class="tech-card">
+              <div data-hf-id="hf-q6ze" id="s2-avatar-glow">
+                <div data-hf-id="hf-fixq" id="s2-avatar-icon">
+                  <svg data-hf-id="hf-1tol" viewBox="0 0 24 24"><path data-hf-id="hf-d0yt" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                </div>
+              </div>
+              <div data-hf-id="hf-toka" id="s2-card-role-title">{{02_intern_card_role}}</div>
+            </div>
+
+            <!-- Features Grid -->
+            <div data-hf-id="hf-0rtn" id="s2-features-grid">
+              <div data-hf-id="hf-6a2i" id="s2-feature-card-1" class="tech-card feature-box">
+                <div data-hf-id="hf-h4mt" id="s2-feat-1-badge" class="feature-icon-circle">
+                  <svg data-hf-id="hf-xneo" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-77jn" d="M7 2v11h3v9l7-12h-4l4-8z" /></svg>
+                </div>
+                <div data-hf-id="hf-94ye" class="feature-text-block">
+                  <h4 data-hf-id="hf-tx9g" id="s2-feat-1-title">{{02_intern_feature_1_title}}</h4>
+                  <p data-hf-id="hf-zl1a" id="s2-feat-1-desc">{{02_intern_feature_1_desc}}</p>
+                </div>
+              </div>
+
+              <div data-hf-id="hf-2byh" id="s2-feature-card-2" class="tech-card feature-box">
+                <div data-hf-id="hf-pphe" id="s2-feat-2-badge" class="feature-icon-circle">
+                  <svg data-hf-id="hf-5ygo" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path data-hf-id="hf-r0g4" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                </div>
+                <div data-hf-id="hf-q4ai" class="feature-text-block">
+                  <h4 data-hf-id="hf-160k" id="s2-feat-2-title">{{02_intern_feature_2_title}}</h4>
+                  <p data-hf-id="hf-i6f8" id="s2-feat-2-desc">{{02_intern_feature_2_desc}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 3: 3D FLOATING FORMULA CARDS ── -->
+        <div data-hf-id="hf-yiqn" id="scene-03-formula" class="scene-wrapper">
+          <div data-hf-id="hf-lyaw" id="s3-content-box" class="scene-content-box">
+            <div data-hf-id="hf-8pbw" id="s3-badge" class="badge-pill badge-cyan">
+              <span data-hf-id="hf-0m7d" class="badge-pulse-dot"></span>
+              <span data-hf-id="hf-hbe5">{{03_formula_badge}}</span>
+            </div>
+            <h1 data-hf-id="hf-rqc9" id="s3-title" class="display-headline">{{03_formula_headline}}</h1>
+            <p data-hf-id="hf-5prp" id="s3-subtext" class="display-subtext">{{03_formula_subtext}}</p>
+
+            <div data-hf-id="hf-zgpu" id="s3-cards-stack">
+              <!-- Floating Card 1: Cyan -->
+              <div data-hf-id="hf-oeza" id="s3-card-1" class="formula-3d-card">
+                <div data-hf-id="hf-a9ss" id="s3-card-1-num" class="pill-number-tag">{{03_formula_step_1_num}}</div>
+                <div data-hf-id="hf-mfxm" class="formula-card-info">
+                  <h3 data-hf-id="hf-qgq9" id="s3-card-1-title">{{03_formula_step_1_title}}</h3>
+                  <p data-hf-id="hf-8eya" id="s3-card-1-desc">{{03_formula_step_1_desc}}</p>
+                </div>
+              </div>
+
+              <!-- Floating Card 2: Emerald -->
+              <div data-hf-id="hf-kgv9" id="s3-card-2" class="formula-3d-card">
+                <div data-hf-id="hf-atbo" id="s3-card-2-num" class="pill-number-tag">{{03_formula_step_2_num}}</div>
+                <div data-hf-id="hf-7l66" class="formula-card-info">
+                  <h3 data-hf-id="hf-jlc1" id="s3-card-2-title">{{03_formula_step_2_title}}</h3>
+                  <p data-hf-id="hf-x8j0" id="s3-card-2-desc">{{03_formula_step_2_desc}}</p>
+                </div>
+              </div>
+
+              <!-- Floating Card 3: Amber -->
+              <div data-hf-id="hf-jp7g" id="s3-card-3" class="formula-3d-card">
+                <div data-hf-id="hf-90js" id="s3-card-3-num" class="pill-number-tag">{{03_formula_step_3_num}}</div>
+                <div data-hf-id="hf-7zh7" class="formula-card-info">
+                  <h3 data-hf-id="hf-pp39" id="s3-card-3-title">{{03_formula_step_3_title}}</h3>
+                  <p data-hf-id="hf-mfay" id="s3-card-3-desc">{{03_formula_step_3_desc}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 4: CTA ── -->
+        <div data-hf-id="hf-1lno" id="scene-04-cta" class="scene-wrapper">
+          <div data-hf-id="hf-78b7" id="s4-content-box" class="scene-content-box">
+            <div data-hf-id="hf-ol5h" id="s4-badge" class="badge-pill badge-amber">
+              <span data-hf-id="hf-10ie" class="badge-pulse-dot"></span>
+              <span data-hf-id="hf-ofm8">{{04_cta_badge}}</span>
+            </div>
+            <h1 data-hf-id="hf-gt2z" id="s4-title" class="display-headline">{{04_cta_headline}}</h1>
+            <p data-hf-id="hf-6orn" id="s4-subtext" class="display-subtext">{{04_cta_subtext}}</p>
+
+            <!-- Hero Summary Card with Pulsing Border -->
+            <div data-hf-id="hf-fkqg" id="s4-hero-card">
+              <div data-hf-id="hf-wkfv" id="s4-card-pill">{{04_cta_card_badge}}</div>
+              <div data-hf-id="hf-ftyt" id="s4-hero-title">{{04_cta_card_title}}</div>
+
+              <div data-hf-id="hf-yvjy" id="s4-formula-row">
+                <span data-hf-id="hf-wtn5" id="s4-formula-role" class="formula-badge-chip">ROLE</span>
+                <span data-hf-id="hf-yqm4" id="s4-formula-plus-1" class="formula-plus">+</span>
+                <span data-hf-id="hf-kvvl" id="s4-formula-context" class="formula-badge-chip">CONTEXT</span>
+                <span data-hf-id="hf-dorx" id="s4-formula-plus-2" class="formula-plus">+</span>
+                <span data-hf-id="hf-0vav" id="s4-formula-format" class="formula-badge-chip">FORMAT</span>
+              </div>
+
+              <button data-hf-id="hf-fcmr" id="s4-cta-button">
+                <svg data-hf-id="hf-ltmh" id="s4-cta-icon" viewBox="0 0 24 24"><path data-hf-id="hf-q5zz" d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" /></svg>
+                <span data-hf-id="hf-lok0" id="s4-cta-label">{{04_cta_cta_btn}}</span>
+              </button>
+              <div data-hf-id="hf-2by8" id="s4-author-tag">{{04_cta_author}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio Elements for Each Scene -->
+    <audio data-hf-id="hf-nz7k" id="audio-scene-01" src="assets/audio/{{lang}}/scene_01.mp3" data-start="{{scene1_start}}" data-duration="{{vo1_dur}}" data-track-index="10" data-volume="1"></audio>
+    <audio data-hf-id="hf-53qa" id="audio-scene-02" src="assets/audio/{{lang}}/scene_02.mp3" data-start="{{scene2_start}}" data-duration="{{vo2_dur}}" data-track-index="10" data-volume="1"></audio>
+    <audio data-hf-id="hf-y4pg" id="audio-scene-03" src="assets/audio/{{lang}}/scene_03.mp3" data-start="{{scene3_start}}" data-duration="{{vo3_dur}}" data-track-index="10" data-volume="1"></audio>
+    <audio data-hf-id="hf-99qa" id="audio-scene-04" src="assets/audio/{{lang}}/scene_04.mp3" data-start="{{scene4_start}}" data-duration="{{vo4_dur}}" data-track-index="10" data-volume="1"></audio>
+  </div>
+
+  <!-- GSAP Animation Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const mainTl = gsap.timeline({ paused: true });
+    window.__timelines["main"] = mainTl;
+
+    (function() {
+      const s1Start = {{scene1_start}};
+      const s1Dur = {{scene1_dur}};
+      const s2Start = {{scene2_start}};
+      const s2Dur = {{scene2_dur}};
+      const s3Start = {{scene3_start}};
+      const s3Dur = {{scene3_dur}};
+      const s4Start = {{scene4_start}};
+      const s4Dur = {{scene4_dur}};
+      const totalDur = {{total_duration}};
+      const fadeTime = 0.38;
+
+      // ── Continuous Ambient Breathing & Floating Micro-movements ────────
+      mainTl.fromTo("#ambient-orb-1", 
+        { x: -30, y: 20, scale: 0.95 }, 
+        { x: 40, y: -30, scale: 1.15, duration: totalDur, ease: "sine.inOut" }, 
+        0
+      );
+      mainTl.fromTo("#ambient-orb-2", 
+        { x: 20, y: -30, scale: 1.1 }, 
+        { x: -40, y: 30, scale: 0.9, duration: totalDur, ease: "sine.inOut" }, 
+        0
+      );
+      mainTl.fromTo("#ambient-orb-3", 
+        { scale: 0.9 }, 
+        { scale: 1.2, duration: totalDur, ease: "sine.inOut" }, 
+        0
+      );
+
+      // Global Progress Bar
+      mainTl.fromTo("#global-progress-bar", 
+        { width: "0%" }, 
+        { width: "100%", duration: totalDur, ease: "none" }, 
+        0
+      );
+
+      // ── SCENE 1: THE MISTAKE ──────────────────────────────────────────
+      mainTl.call(() => {
+        const el = document.getElementById("global-scene-counter");
+        if (el) el.textContent = "01 / 04";
+      }, null, s1Start);
+
+      mainTl.set("#scene-01-hook", { autoAlpha: 1 }, s1Start);
+
+      // Header Elements Slide Up with Stagger
+      mainTl.fromTo(["#s1-badge", "#s1-title", "#s1-subtext"], 
+        { y: 40, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.55, stagger: 0.12, ease: "power3.out" }, 
+        s1Start + 0.1
+      );
+
+      // Chat Window Pop In
+      mainTl.fromTo("#s1-chat-window", 
+        { scale: 0.92, opacity: 0, y: 30 }, 
+        { scale: 1, opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.4)" }, 
+        s1Start + 0.45
+      );
+
+      // Typewriter Effect
+      const promptString = "{{01_hook_prompt_card_text}}";
+      const promptEl = document.getElementById("s1-typewriter-text");
+      const typewriterState = { chars: 0 };
+      
+      mainTl.to(typewriterState, {
+        chars: promptString.length,
+        duration: Math.min(2.0, s1Dur * 0.35),
+        ease: "none",
+        onUpdate: function() {
+          if (promptEl) {
+            promptEl.textContent = promptString.slice(0, Math.round(typewriterState.chars));
+          }
+        }
+      }, s1Start + 0.7);
+
+      // Red Failure Badge Pop In & Shake
+      const failTime = s1Start + 0.7 + Math.min(2.0, s1Dur * 0.35) + 0.3;
+      mainTl.fromTo("#s1-failure-badge", 
+        { scale: 0, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 
+        failTime
+      );
+      // Gentle Shake Animation
+      mainTl.to("#s1-failure-badge", { x: -8, duration: 0.07, repeat: 5, yoyo: true, ease: "power1.inOut" }, failTime + 0.35);
+
+      // Generic Output Card Slide Up
+      mainTl.fromTo("#s1-output-card", 
+        { y: 40, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 
+        failTime + 0.7
+      );
+
+      // Exit Scene 1
+      const s1Exit = s2Start - fadeTime;
+      mainTl.to("#scene-01-hook", { 
+        y: -50, 
+        opacity: 0, 
+        duration: fadeTime, 
+        ease: "power2.in" 
+      }, s1Exit);
+      mainTl.set("#scene-01-hook", { autoAlpha: 0 }, s2Start);
+
+      // ── SCENE 2: THE INTERN MINDSET ───────────────────────────────────
+      mainTl.call(() => {
+        const el = document.getElementById("global-scene-counter");
+        if (el) el.textContent = "02 / 04";
+      }, null, s2Start);
+
+      mainTl.set("#scene-02-intern", { autoAlpha: 1 }, s2Start);
+
+      mainTl.fromTo(["#s2-badge", "#s2-title", "#s2-subtext"], 
+        { y: 40, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.55, stagger: 0.12, ease: "power3.out" }, 
+        s2Start + 0.1
+      );
+
+      // Comparison Battle Pills
+      mainTl.fromTo("#s2-tag-bad", 
+        { x: -40, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 
+        s2Start + 0.45
+      );
+      mainTl.fromTo("#s2-strikethrough-line", 
+        { width: "0%" }, 
+        { width: "100%", duration: 0.4, ease: "power2.inOut" }, 
+        s2Start + 0.95
+      );
+      mainTl.fromTo("#s2-tag-arrow", 
+        { scale: 0, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" }, 
+        s2Start + 1.25
+      );
+      mainTl.fromTo("#s2-tag-good", 
+        { scale: 0.7, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(1.8)" }, 
+        s2Start + 1.45
+      );
+
+      // Hero Avatar Card Pop
+      mainTl.fromTo("#s2-hero-card", 
+        { y: 30, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.55, ease: "back.out(1.4)" }, 
+        s2Start + 1.8
+      );
+
+      // Feature Rows Stagger In
+      mainTl.fromTo("#s2-feature-card-1", 
+        { x: -50, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 
+        s2Start + 2.2
+      );
+      mainTl.fromTo("#s2-feature-card-2", 
+        { x: 50, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 
+        s2Start + 2.5
+      );
+
+      // Exit Scene 2
+      const s2Exit = s3Start - fadeTime;
+      mainTl.to("#scene-02-intern", { 
+        y: -50, 
+        opacity: 0, 
+        duration: fadeTime, 
+        ease: "power2.in" 
+      }, s2Exit);
+      mainTl.set("#scene-02-intern", { autoAlpha: 0 }, s3Start);
+
+      // ── SCENE 3: THE 3-PART FORMULA ───────────────────────────────────
+      mainTl.call(() => {
+        const el = document.getElementById("global-scene-counter");
+        if (el) el.textContent = "03 / 04";
+      }, null, s3Start);
+
+      mainTl.set("#scene-03-formula", { autoAlpha: 1 }, s3Start);
+
+      mainTl.fromTo(["#s3-badge", "#s3-title", "#s3-subtext"], 
+        { y: 40, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.55, stagger: 0.12, ease: "power3.out" }, 
+        s3Start + 0.1
+      );
+
+      // Pop in the 3 Floating Cards staggered in sync with voice
+      const stepInterval = (s3Dur - 1.8) / 3;
+
+      mainTl.fromTo("#s3-card-1", 
+        { scale: 0.85, y: 50, opacity: 0 }, 
+        { scale: 1, y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.5)" }, 
+        s3Start + 0.5
+      );
+      mainTl.fromTo("#s3-card-2", 
+        { scale: 0.85, y: 50, opacity: 0 }, 
+        { scale: 1, y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.5)" }, 
+        s3Start + 0.5 + stepInterval
+      );
+      mainTl.fromTo("#s3-card-3", 
+        { scale: 0.85, y: 50, opacity: 0 }, 
+        { scale: 1, y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.5)" }, 
+        s3Start + 0.5 + (stepInterval * 2)
+      );
+
+      // Floating 3D Micro-movement after all cards enter
+      const floatStart = s3Start + 0.5 + (stepInterval * 2) + 0.7;
+      mainTl.to(["#s3-card-1", "#s3-card-3"], {
+        y: "-=8",
+        duration: 1.3,
+        repeat: 1,
+        yoyo: true,
+        ease: "sine.inOut",
+        overwrite: "auto"
+      }, floatStart);
+      mainTl.to("#s3-card-2", {
+        y: "+=8",
+        duration: 1.4,
+        repeat: 1,
+        yoyo: true,
+        ease: "sine.inOut",
+        overwrite: "auto"
+      }, floatStart);
+
+      // Exit Scene 3
+      const s3Exit = s4Start - fadeTime;
+      mainTl.to("#scene-03-formula", { 
+        y: -50, 
+        opacity: 0, 
+        duration: fadeTime, 
+        ease: "power2.in" 
+      }, s3Exit);
+      mainTl.set("#scene-03-formula", { autoAlpha: 0 }, s4Start);
+
+      // ── SCENE 4: CTA ──────────────────────────────────────────────────
+      mainTl.call(() => {
+        const el = document.getElementById("global-scene-counter");
+        if (el) el.textContent = "04 / 04";
+      }, null, s4Start);
+
+      mainTl.set("#scene-04-cta", { autoAlpha: 1 }, s4Start);
+
+      mainTl.fromTo(["#s4-badge", "#s4-title", "#s4-subtext"], 
+        { y: 40, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.55, stagger: 0.12, ease: "power3.out" }, 
+        s4Start + 0.1
+      );
+
+      // Hero Summary Card Entrance
+      mainTl.fromTo("#s4-hero-card", 
+        { scale: 0.84, opacity: 0, y: 40 }, 
+        { scale: 1, opacity: 1, y: 0, duration: 0.7, ease: "back.out(1.4)" }, 
+        s4Start + 0.5
+      );
+
+      // Chips row pop in
+      mainTl.fromTo(["#s4-formula-role", "#s4-formula-plus-1", "#s4-formula-context", "#s4-formula-plus-2", "#s4-formula-format"],
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, stagger: 0.08, ease: "back.out(2)" },
+        s4Start + 0.85
+      );
+
+      // CTA Button High-Impact Bounce & Shimmer
+      mainTl.fromTo("#s4-cta-button", 
+        { scale: 0.85, opacity: 0 }, 
+        { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(2.2)" }, 
+        s4Start + 1.2
+      );
+
+      mainTl.fromTo("#s4-author-tag", 
+        { opacity: 0, y: 15 }, 
+        { opacity: 1, y: 0, duration: 0.5 }, 
+        s4Start + 1.5
+      );
+
+      // Final Pin to total video runtime
+      mainTl.to({}, { duration: totalDur }, 0);
+    })();
+  </script>
+</body>
+</html>
