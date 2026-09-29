@@ -89,9 +89,14 @@ const tokens = {
   fps: String(fps),
   total_duration: totalDuration.toFixed(3),
   total_frames: String(totalFrames),
+  font_serif: lang === "th" 
+    ? "'Noto Serif Thai', 'Libre Baskerville', Georgia, serif" 
+    : "'Libre Baskerville', 'Noto Serif Thai', Georgia, serif",
+  font_sans: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
   font_family: lang === "th" 
-    ? "'Kanit', 'Plus Jakarta Sans', sans-serif" 
-    : "'Plus Jakarta Sans', 'Kanit', sans-serif",
+    ? "'Noto Serif Thai', 'Libre Baskerville', Georgia, serif" 
+    : "'Libre Baskerville', 'Noto Serif Thai', Georgia, serif",
+  plate_01: "assets/plate_01.webp",
 };
 
 // Add per-scene timing tokens
